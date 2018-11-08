@@ -11,6 +11,7 @@ public class AdventurerController : MonoBehaviour {
     int idleHash = Animator.StringToHash("Idle2");
     int runHash = Animator.StringToHash("Run");
     int runBooleanHash = Animator.StringToHash("Running");
+    int attackOneHash = Animator.StringToHash("AttackBool");
 	void Start () {
         anim = GetComponent<Animator>();
         sRenderer = GetComponent<SpriteRenderer>();
@@ -42,6 +43,22 @@ public class AdventurerController : MonoBehaviour {
            // anim.SetTrigger(idleHash);
             anim.SetBool(runBooleanHash, false);
         }
+        if(Input.GetAxis("Attack1") != 0)
+        {
+            //anim.SetBool(runBooleanHash, false);
+            anim.SetBool(attackOneHash,true);
+        }
+        else
+        {
+            anim.SetBool(attackOneHash, false);
+        }
+        
+        if(anim.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
+        {
+            move = new Vector2(0, 0);
+        }
+
+        
 
         //MOVEMENT
         transform.position = transform.position + new Vector3(move.x, move.y)*Time.deltaTime;
