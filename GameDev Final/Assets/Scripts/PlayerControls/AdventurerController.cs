@@ -6,6 +6,13 @@ public class AdventurerController : MonoBehaviour {
 
     Animator anim;
     SpriteRenderer sRenderer;
+    //ANIM TIMES
+    const float ATTACKONETIME = 0.500f;
+
+
+
+    public bool blockingMovement = false;
+    public float blockingTime;
     public float runSpeed = 20;
     // Use this for initialization
     int idleHash = Animator.StringToHash("Idle2");
@@ -47,15 +54,23 @@ public class AdventurerController : MonoBehaviour {
         {
             //anim.SetBool(runBooleanHash, false);
             anim.SetBool(attackOneHash,true);
+            if(blockingMovement!=true)
+            {
+                blockingTime = Time.time + ATTACKONETIME;
+            }
+            blockingMovement = true;
         }
         else
         {
             anim.SetBool(attackOneHash, false);
         }
         
-        if(anim.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
+        if(blockingMovement)
         {
-            move = new Vector2(0, 0);
+            if (Time.time > blockingTime)
+                blockingMovement = false;
+            else
+                move = new Vector2(0, 0);
         }
 
         
