@@ -2,16 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof (BoxCollider2D))]
 public class AdventurerController : MonoBehaviour {
 
+    public enum EntityState {RUNNING, STANDING, ATTACKING};
+    
     Animator anim;
     SpriteRenderer sRenderer;
+    AudioSource source;
     //ANIM TIMES
     const float ATTACKONETIME = 0.500f;
 
 
 
     public bool blockingMovement = false;
+    //public bool isRunning = false;
+    public EntityState currentState = EntityState.STANDING;
     public float blockingTime;
     public float runSpeed = 20;
     // Use this for initialization
@@ -19,9 +25,17 @@ public class AdventurerController : MonoBehaviour {
     int runHash = Animator.StringToHash("Run");
     int runBooleanHash = Animator.StringToHash("Running");
     int attackOneHash = Animator.StringToHash("AttackBool");
+
+    //AudioClips
+    public bool runSoundAlternate = false;
+    public AudioClip runSoundOne;
+    public AudioClip runSoundTwo;
+    public AudioClip attackSound;
+
 	void Start () {
         anim = GetComponent<Animator>();
         sRenderer = GetComponent<SpriteRenderer>();
+        source = GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -35,6 +49,8 @@ public class AdventurerController : MonoBehaviour {
         {
             //anim.SetTrigger(runHash);
             anim.SetBool(runBooleanHash, true);
+            currentState = EntityState.RUNNING;
+          
             //Debug.Log("Setting trigger");
             if (move.x < 0)
             {
@@ -49,6 +65,8 @@ public class AdventurerController : MonoBehaviour {
         {
            // anim.SetTrigger(idleHash);
             anim.SetBool(runBooleanHash, false);
+            currentState = EntityState.STANDING;
+            
         }
         if(Input.GetAxis("Attack1") != 0)
         {
@@ -57,8 +75,11 @@ public class AdventurerController : MonoBehaviour {
             if(blockingMovement!=true)
             {
                 blockingTime = Time.time + ATTACKONETIME;
+                source.PlayOneShot(attackSound);
             }
+         
             blockingMovement = true;
+            
         }
         else
         {
@@ -77,5 +98,25 @@ public class AdventurerController : MonoBehaviour {
 
         //MOVEMENT
         transform.position = transform.position + new Vector3(move.x, move.y)*Time.deltaTime;
+
+        DoSound();
 	}
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Debug.Log("Collision entereD");
+    }
+    private void DoSound()
+    {
+        if(currentState == EntityState.RUNNING)
+        {
+            if (!source.isPlaying)
+                if (runSoundAlternate) {source.PlayOneShot(runSoundOne); runSoundAlternate = false; }
+                else { source.PlayOneShot(runSoundTwo); runSoundAlternate = true; }
+        }
+        else
+        {
+            runSoundAlternate = false;
+        }
+    }
 }

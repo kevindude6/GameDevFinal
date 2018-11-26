@@ -41,3 +41,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: GroundSorting
+    uniqueID: 1007785259
+    locked: 0
+  - name: WallsSorting
+    uniqueID: 3168561279
+    locked: 0
+  - name: FeaturesSorting
+    uniqueID: 273484623
+    locked: 0
+  - name: EntitySorting
+    uniqueID: 2822680621
+    locked: 0
