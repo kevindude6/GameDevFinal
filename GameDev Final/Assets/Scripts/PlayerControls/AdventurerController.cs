@@ -36,6 +36,7 @@ public class AdventurerController : MonoBehaviour {
         anim = GetComponent<Animator>();
         sRenderer = GetComponent<SpriteRenderer>();
         source = GetComponent<AudioSource>();
+        
 	}
 	
 	// Update is called once per frame
@@ -75,7 +76,8 @@ public class AdventurerController : MonoBehaviour {
             if(blockingMovement!=true)
             {
                 blockingTime = Time.time + ATTACKONETIME;
-                source.PlayOneShot(attackSound);
+   
+                source.PlayOneShot(attackSound,0.7f);
             }
          
             blockingMovement = true;
@@ -85,6 +87,29 @@ public class AdventurerController : MonoBehaviour {
         {
             anim.SetBool(attackOneHash, false);
         }
+
+
+        if(Input.GetAxis("Interact")!=0)
+        {
+            GameObject[] entities = GameObject.FindGameObjectsWithTag("Interactable");
+            foreach (GameObject e in entities)
+            {
+                if (Vector3.Distance(e.transform.position, transform.position) < 1.5f)
+                {
+                    MonoBehaviour[] list = e.GetComponents<MonoBehaviour>();
+                    foreach (MonoBehaviour mb in list)
+                    {
+                        if (mb is IInteractable)
+                        {
+                            IInteractable interactable = (IInteractable)mb;
+                            interactable.OnInteract();
+                            //Debug.Log("Interacting with something");
+                        }
+                    }
+                }
+            }
+        }
+
         
         if(blockingMovement)
         {
@@ -102,17 +127,14 @@ public class AdventurerController : MonoBehaviour {
         DoSound();
 	}
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        Debug.Log("Collision entereD");
-    }
+   
     private void DoSound()
     {
         if(currentState == EntityState.RUNNING)
         {
             if (!source.isPlaying)
-                if (runSoundAlternate) {source.PlayOneShot(runSoundOne); runSoundAlternate = false; }
-                else { source.PlayOneShot(runSoundTwo); runSoundAlternate = true; }
+                if (runSoundAlternate) {source.PlayOneShot(runSoundOne,0.3f); runSoundAlternate = false; }
+                else { source.PlayOneShot(runSoundTwo,0.3f); runSoundAlternate = true; }
         }
         else
         {
