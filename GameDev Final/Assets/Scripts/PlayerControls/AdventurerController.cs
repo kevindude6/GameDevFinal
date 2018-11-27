@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof (BoxCollider2D))]
+[RequireComponent(typeof(AttackManager))]
 public class AdventurerController : MonoBehaviour {
 
     public enum EntityState {RUNNING, STANDING, ATTACKING};
@@ -10,6 +11,7 @@ public class AdventurerController : MonoBehaviour {
     Animator anim;
     SpriteRenderer sRenderer;
     AudioSource source;
+    AttackManager attackMan;
     //ANIM TIMES
     const float ATTACKONETIME = 0.500f;
 
@@ -36,7 +38,7 @@ public class AdventurerController : MonoBehaviour {
         anim = GetComponent<Animator>();
         sRenderer = GetComponent<SpriteRenderer>();
         source = GetComponent<AudioSource>();
-        
+        attackMan = GetComponent<AttackManager>();
 	}
 	
 	// Update is called once per frame
@@ -57,7 +59,7 @@ public class AdventurerController : MonoBehaviour {
             {
                 sRenderer.flipX = true;
             }
-            else
+            else if(move.x>0)
             {
                 sRenderer.flipX = false;
             }
@@ -76,8 +78,9 @@ public class AdventurerController : MonoBehaviour {
             if(blockingMovement!=true)
             {
                 blockingTime = Time.time + ATTACKONETIME;
-   
+                
                 source.PlayOneShot(attackSound,0.7f);
+                attackMan.Attack(sRenderer.flipX);
             }
          
             blockingMovement = true;
